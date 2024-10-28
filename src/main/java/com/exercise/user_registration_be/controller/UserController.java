@@ -13,6 +13,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.Optional;
+
 @RestController
 @RequestMapping("/user")
 @RequiredArgsConstructor
@@ -45,8 +47,8 @@ public class UserController {
         try {
             boolean isAuthenticated = userService.authenticate(loginRequest.getUserName(), loginRequest.getPassword());
             if (isAuthenticated) {
-
-                ApiResponse response = new ApiResponse(true, "Login successfully!", loginRequest.getUserName());
+                Optional<User> user = userService.getUserByUserName(loginRequest.getUserName());
+                ApiResponse response = new ApiResponse(true, "Login successfully!", user.get());
                 return new ResponseEntity<>(response, HttpStatus.OK);
             } else {
                 ApiResponse response = new ApiResponse(false, "Invalid password", loginRequest.getUserName());

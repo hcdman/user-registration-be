@@ -35,6 +35,10 @@ public class UserService {
             return true;
         return false;
     }
+    public Optional<User> getUserByUserName(String userName)
+    {
+        return userRepository.findByUserName(userName);
+    }
     public boolean authenticate(String username, String password) {
         User user = userRepository.findByUserName(username)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found"));
