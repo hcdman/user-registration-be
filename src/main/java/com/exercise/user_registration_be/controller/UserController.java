@@ -45,6 +45,7 @@ public class UserController {
         try {
             boolean isAuthenticated = userService.authenticate(loginRequest.getUserName(), loginRequest.getPassword());
             if (isAuthenticated) {
+
                 ApiResponse response = new ApiResponse(true, "Login successfully!", loginRequest.getUserName());
                 return new ResponseEntity<>(response, HttpStatus.OK);
             } else {
