@@ -8,10 +8,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.Optional;
 
@@ -28,7 +25,7 @@ public class UserController {
                 ApiResponse apiResponse = ApiResponse.builder().success(false).message("Email already exist!").data(null).build();
                 return new ResponseEntity<>(apiResponse,HttpStatus.BAD_REQUEST);
             }
-            if(userService.checkExistedUserName(user.getUserName()))
+            if(userService.checkExistedUserName(user.getUsername()))
             {
                 ApiResponse apiResponse = ApiResponse.builder().success(false).message("User name already exist!").data(null).build();
                 return new ResponseEntity<>(apiResponse,HttpStatus.BAD_REQUEST);
@@ -48,7 +45,8 @@ public class UserController {
             boolean isAuthenticated = userService.authenticate(loginRequest.getUserName(), loginRequest.getPassword());
             if (isAuthenticated) {
                 Optional<User> user = userService.getUserByUserName(loginRequest.getUserName());
-                ApiResponse response = new ApiResponse(true, "Login successfully!", user.get());
+                String token = userService.generateToken(loginRequest.getUserName(),loginRequest.getPassword());
+                ApiResponse response = new ApiResponse(true, token, user.get());
                 return new ResponseEntity<>(response, HttpStatus.OK);
             } else {
                 ApiResponse response = new ApiResponse(false, "Invalid password", loginRequest.getUserName());
@@ -58,7 +56,19 @@ public class UserController {
             ApiResponse response = new ApiResponse(false, "User not found", null);
             return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
         } catch (Exception e) {
-            ApiResponse response = new ApiResponse(false, "Login failed", null);
+            ApiResponse response = new ApiResponse(false, e.getMessage(), null);
+            return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+    @GetMapping("/profile")
+    public ResponseEntity<ApiResponse> getProfile(@RequestHeader("Authorization") String authorizationHeader) {
+        try {
+            String extractedToken = authorizationHeader.substring(7);
+            User user = userService.getUserDetailFromToken(extractedToken);
+            ApiResponse response = new ApiResponse(true, "Get profile successfully!", user);
+            return new ResponseEntity<>(response, HttpStatus.OK);
+        } catch (Exception e) {
+            ApiResponse response = new ApiResponse(false, "Get data profile failed", null);
             return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }

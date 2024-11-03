@@ -9,3 +9,6 @@ spring:
     show-sql: true
 server:
   port: 8080
+jwt:
+  expiration: ${EXPIRATION}
+  secretKey: ${SECRET_KEY}
