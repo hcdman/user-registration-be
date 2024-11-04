@@ -39,7 +39,7 @@ public class WebSecurityConfig {
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
         configuration.setAllowCredentials(true);
-        configuration.setAllowedOrigins(Arrays.asList("http://localhost:5173", "https://user-registration-fe.vercel.app"));
+        configuration.setAllowedOrigins(Arrays.asList("https://user-registration-fe-v2.vercel.app", "https://user-registration-fe.vercel.app"));
         configuration.addAllowedHeader("*");
         configuration.setAllowedMethods(Arrays.asList("HEAD", "GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"));
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
